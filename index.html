@@ -22,6 +22,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment-with-locales.min.js"
         integrity="sha512-LGXaggshOkD/at6PFNcp2V2unf9LzFq6LE+sChH7ceMTDP0g2kn6Vxwgg7wkPP7AAtX+lmPqPdxB47A0Nz0cMQ=="
         crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.0/jspdf.umd.min.js"></script>
 </head>
 <style>
     body {
@@ -49,7 +51,7 @@
         font-size: 9px;
         width: 130%;
     }
-    
+
 
     .microcicloReg {
         max-height: 480px !important;
@@ -72,6 +74,20 @@
     select.form-control[multiple],
     select.form-control[size] {
         height: auto;
+    }
+
+    .entrenoHeader {
+        background-color: darkcyan !important;
+        font-size: 16px !important;
+        color: white;
+    }
+
+    .entrenoBody {
+        margin-left: 10px;
+        background-color: white;
+        font-size: 12px;
+        color: black;
+        height: 250px;
     }
 </style>
 
@@ -96,6 +112,10 @@
                 <a href="#" class="nav-link disabled">Login</a>
             </li>
         </ul>
+    </div>
+    <br>
+    <div>
+
     </div>
     <div class="container-fluid">
         <br>
@@ -250,43 +270,54 @@
             </div>
         </div>
     </div>
-    <div>
- </body>
+    <br>
+    <div class="container">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Programa de entrenamiento</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12 programaMicro">
 
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
 
 </html>
-
-
-
-
-
 <script>
-      var nroDias = 0;
-    $(function () {    
+    var nroDias = 0;
+    var contDias = 0;
+    $(function () {
 
 
 
         $("#btnNuevoReg").click(function () {
             nroDias += 1;
+            contDias += 1;
 
             let filaMicro = `<div id="diaMicro` + nroDias + `" class="diaMicro row col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             
                             <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                                 <h5>`+ nroDias + `</h5>
-                                <select class="form-control">
-                                    <option>L</option>
-                                    <option>M</option>
-                                    <option>X</option>
-                                    <option>J</option>
+                                <select id="dia`+ nroDias + `" class="form-control">
+                                    <option value="Lunes">L</option>
+                                    <option value="Martes">M</option>
+                                    <option value="Miercoles">X</option>
+                                    <option value="Jueves">J</option>
                                     <option>V</option>
                                     <option>S</option>
                                     <option>D</option>
                                 </select>
                                 <br>
-                                <input type="date" class="diaDate form-control" />
+                                <input id="fecha`+ nroDias + `" type="date" class="diaDate form-control" />
                             </div>
                             <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-                                <select class="form-control">
+                                <select id="carga`+ nroDias + `" class="form-control">
                                     <option>Baja</option>
                                     <option>Media</option>
                                     <option>Importante</option>
@@ -295,7 +326,7 @@
                                 </select>
                             </div>
                             <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-                                <select multiple class="form-control">
+                                <select id="direccion`+ nroDias + `" multiple class="form-control">
 
                                     <option>Reg</option>
                                     <option>R1</option>
@@ -312,7 +343,7 @@
                                 </select>
                             </div>
                             <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-                                <select multiple class="form-control">
+                                <select id="deporte`+ nroDias + `" multiple class="form-control">
                                     <option>Nat</option>
                                     <option>Cicl</option>
                                     <option>Carr</option>
@@ -322,10 +353,10 @@
                             </div>
 
                             <div class="col-xs-2 col-sm-2 col-md-2 col-lg-4">
-                                <textarea class="form-control"></textarea><br>
-                                <textarea class="form-control"></textarea><br>
-                                <textarea class="form-control"></textarea><br>
-                                <textarea class="form-control"></textarea><br>
+                                <textarea id="nat`+ nroDias + `" class="form-control"></textarea><br>
+                                <textarea id="cicl`+ nroDias + `" class="form-control"></textarea><br>
+                                <textarea id="carr`+ nroDias + `" class="form-control"></textarea><br>
+                                <textarea id="gym`+ nroDias + `" class="form-control"></textarea><br>
                             </div>
                             <button id="guardarDia`+ nroDias + `" class="btn btn-success" onclick="guardar(` + nroDias + `);">Guardar</button>
                            <button id="eliminarDia`+ nroDias + `" class="btn btn-danger" onclick="eliminar(` + nroDias + `);">Eliminar</button>
@@ -338,10 +369,64 @@
     });
 
 
+
+
 </script>
 <script>
-    function eliminar(nroDia) {    
-        
+    function eliminar(nroDia) {
+
+        contDias -= 1;
+
         $("#diaMicro" + nroDia).empty();
+    }
+
+    function guardar(nroDia) {
+        let dia = "";
+        let fecha = "";
+        let nat = "";
+        let cicl = "";
+        let carr = "";
+        let gim = "";
+        let direccion = "";
+        let deportes = "";
+
+        dia = $("#dia" + nroDia).val();
+        fecha = $("#fecha" + nroDia).val();
+        direccion = $("#direccion" + nroDia).val();
+        deportes = $("#deporte" + nroDia).val();
+        nat = $("#nat" + nroDia).val();
+        cicl = $("#cicl" + nroDia).val();
+        carr = $("#carr" + nroDia).val();
+        gim = $("#gym" + nroDia).val();
+
+        fecha = moment(fecha, 'yyyy-MM-DD').format('DD/MM/yyyy');
+
+
+
+        let filaDia = `<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="card">
+                <center>
+                    <div class="card-hearder entrenoHeader">
+                        <img class="card-img-top" src="" alt="">
+                        <p><b id="dia">`+ dia + `</b><b id="fecha"> ` + fecha + `</b></p>
+                    </div>
+                </center>
+                <div class="entrenoBody">
+                    <p id="nat">`+ nat + `</p>
+                    <p id="cicl">`+ cicl + `</p>
+                    <p id="carr">`+ carr + `</p>
+                    <p id="gim">`+ gim + `</p>
+                </div>
+                <center>
+                    <div class="card-footer entrenoFooter">
+                        <p><b>Deportes: </b><b id="direccion">`+ deportes + `</b></p>
+                        <p><b>Direcciones: </b><b id="direccion">`+ direccion + `</b></p>
+                    </div>
+                </center>
+            </div>
+            <br>
+        </div>`;
+        $(".programaMicro").append(filaDia);
+
     }
 </script>
