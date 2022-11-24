@@ -4,5 +4,5 @@
 <p><b>Herramientas</b></p>
 <ul>
 <li>Servidor web APACHE, BD Mysql, PHP Lenguaje</li>
-<li> Boostrap y Jquery</li>
+<li> Boostrap y Jquery, Javascript, Css</li>
 <ul>
